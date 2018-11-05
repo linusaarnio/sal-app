@@ -14,5 +14,5 @@ class Category {
       if (room.isFreeBetween(begin, end)) freeRooms.add(room); 
     }
     return freeRooms;
-  }
+  } 
 }

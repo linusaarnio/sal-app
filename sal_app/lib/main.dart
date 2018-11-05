@@ -19,17 +19,17 @@ class MyApp extends StatelessWidget {
           // "hot reload" (press "r" in the console where you ran "flutter run",
           // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
           // counter didn't reset back to zero; the application is not restarted.
-          primarySwatch: Colors.blue,
+         // primarySwatch: Colors.blue,
         ),
         home: Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.blue[100],
+            //backgroundColor: Colors.blue[100],
             title: Text(
               "Categories",
               style: Theme.of(context).textTheme.headline,
             ),
           ),
-          backgroundColor: Colors.blue[100],
+          //backgroundColor: Colors.blue[100],
           body: CategoryScreen(),
         ));
   }

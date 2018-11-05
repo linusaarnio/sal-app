@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'category.dart';
+import 'rooms_for_category_screen.dart';
+
 
 /// The UI for choosing a category.
 class CategoryScreen extends StatefulWidget {
@@ -42,11 +44,29 @@ class CategoryTile extends StatelessWidget {
   final Category _category;
   CategoryTile(this._category);
 
+
+void _navigateToRoomsForCategory(BuildContext context) {
+  Navigator.of(context).push(MaterialPageRoute<Null>(
+    builder: (BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Lediga " + _category.name),
+          elevation: 1.0,
+        ),
+        body: RoomsForCategoryScreen(_category.rooms),
+      );
+    }
+  ));
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Material(
         child: Container(
-          color: Colors.blue[100],
+          //color: Colors.blue[100],
+          child: InkWell(
+            onTap: () => _navigateToRoomsForCategory(context),
             child: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Row(
@@ -64,6 +84,6 @@ class CategoryTile extends StatelessWidget {
                       ),
                     ),
                   ],
-                ))));
+                )))));
   }
 }

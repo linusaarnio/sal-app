@@ -1,0 +1,16 @@
+-KLART Skapa klass Booking
+	-begin
+	-end
+-KLART Skapa rumsklass
+	*isFreeBetween(starttime, endtime)
+	*name
+	*categories
+	*List<Booking> _bookings
+KLART Skapa kategoriklass
+	*List<Room> _rooms
+	*Name
+	*List<Room> freeRoomsBetween(starttime, endtime)
+KLART(BASIC) Skapa kategoriväljar- screen
+- Skapa kategorivisning för dagens datum
+- Skriv en ical-parser som skapar Category - och Room-objekt från ett kategoriobjekt
+- Skapa kategorivisning för valfritt datumco

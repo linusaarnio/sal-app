@@ -25,9 +25,9 @@ class MyApp extends StatelessWidget {
           appBar: AppBar(
             //backgroundColor: Colors.blue[100],
             title: Text(
-              "Categories",
-              style: Theme.of(context).textTheme.headline,
+              "Kategorier",
             ),
+            elevation: 1.0,
           ),
           //backgroundColor: Colors.blue[100],
           body: CategoryScreen(),

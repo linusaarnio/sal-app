@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'category.dart';
 import 'rooms_for_category_screen.dart';
 import 'room.dart';
+import 'utils.dart';
 
 double _basePadding = 16.0;
 double _paddingBetweenIconAndText = 70.0;
@@ -38,7 +39,10 @@ class CategoryTile extends StatelessWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(
-                              bottom: 8.0, left: 8.0, right: _paddingBetweenIconAndText, top: 8.0),
+                              bottom: 8.0,
+                              left: 8.0,
+                              right: _paddingBetweenIconAndText,
+                              top: 8.0),
                           child: Icon(Icons.code),
                         ),
                         Center(
@@ -55,10 +59,10 @@ class CategoryTile extends StatelessWidget {
 
 /// A tile which can either show just the time span, or a list of rooms with info about availability
 class ScheduleBlockTile extends StatefulWidget {
-  //final List<Room> rooms;
+  final List<Room> rooms;
   final int startHour;
 
-  ScheduleBlockTile(this.startHour);
+  ScheduleBlockTile(this.startHour, this.rooms);
 
   @override
   _ScheduleBlockTileState createState() => _ScheduleBlockTileState();
@@ -77,7 +81,10 @@ class _ScheduleBlockTileState extends State<ScheduleBlockTile> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(
-                  bottom: 8.0, left: 8.0, right: _paddingBetweenIconAndText, top: 8.0),
+                  bottom: 8.0,
+                  left: 8.0,
+                  right: _paddingBetweenIconAndText,
+                  top: 8.0),
               child: _showRooms
                   ? Icon(Icons.keyboard_arrow_down)
                   : Icon(Icons.keyboard_arrow_right),
@@ -94,6 +101,35 @@ class _ScheduleBlockTileState extends State<ScheduleBlockTile> {
         ));
   }
 
+  Widget _roomsBlock() {
+    var roomtexts = <Text>[];
+    for (var room in widget.rooms) {
+      var isFree = room.isFreeBetween(
+          DateTime(
+            currentYear,
+            currentMonth,
+            currentDay,
+            widget.startHour,
+            15,
+          ),
+          DateTime(
+            currentYear,
+            currentMonth,
+            currentDay,
+            widget.startHour + 2,
+          ));
+      roomtexts.add(Text(
+        room.name,
+        style: Theme.of(context).textTheme.display1.apply(
+              color: isFree ? Colors.green : Colors.red,
+            ),
+      ));
+    }
+    return Column(
+      children: roomtexts,
+    );
+  }
+
   void _extendRoomList(BuildContext context) {
     setState(() {
       _showRooms = !_showRooms;
@@ -105,7 +141,16 @@ class _ScheduleBlockTileState extends State<ScheduleBlockTile> {
     return Material(
         child: InkWell(
       onTap: () => _extendRoomList(context),
-      child: _timeTile(),
+      child: Column(
+        children: _showRooms
+            ? <Widget>[
+                _timeTile(),
+                _roomsBlock(),
+              ]
+            : <Widget>[
+                _timeTile(),
+              ],
+      ),
     ));
   }
 }

@@ -11,6 +11,7 @@ KLART Skapa kategoriklass
 	*Name
 	*List<Room> freeRoomsBetween(starttime, endtime)
 KLART(BASIC) Skapa kategoriväljar- screen
-- Skapa kategorivisning för dagens datum
+KLART(BASIC) Skapa kategorivisning för dagens datum
 - Skriv en ical-parser som skapar Category - och Room-objekt från ett kategoriobjekt
 - Skapa kategorivisning för valfritt datumco
+- Snygga till allting, särskilt sådant benämnt BASIC

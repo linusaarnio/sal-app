@@ -3,7 +3,7 @@ import 'room.dart';
 List<String> categoryNames = ["SU-salar", "PC-salar"];
 
 class Category {
-  List<Room> rooms;
+  List<Room> rooms = <Room>[Room("SU00")];
   final String name;
 
   Category(this.name);

@@ -3,16 +3,24 @@ import 'category.dart';
 import 'rooms_for_category_screen.dart';
 import 'room.dart';
 import 'utils.dart';
+import 'ical_to_category.dart';
+import 'dart:io';
 
 double _basePadding = 16.0;
 double _paddingBetweenIconAndText = 70.0;
+String testIcal = "https://cloud.timeedit.net/liu/web/schema/ri657Q5QU95ZYYQ5Q367Qjugy4Z5WY75nb5SZY.ics";
 
 /// The UI for a single category in categories display
 class CategoryTile extends StatelessWidget {
   final Category _category;
   CategoryTile(this._category);
 
-  void _navigateToRoomsForCategory(BuildContext context) {
+  void _navigateToRoomsForCategory(BuildContext context) async{
+
+
+    Uri uri = Uri.parse(testIcal);
+    await categoryFromUrl(uri);
+
     Navigator.of(context)
         .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
       return Scaffold(

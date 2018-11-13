@@ -15,3 +15,6 @@ KLART(BASIC) Skapa kategorivisning för dagens datum
 - Skriv en ical-parser som skapar Category - och Room-objekt från ett kategoriobjekt
 - Skapa kategorivisning för valfritt datumco
 - Snygga till allting, särskilt sådant benämnt BASIC
+
+
+TODO: parsern konstruerar strängar med all data från ett event. skapa _Vevent:s av dessa strängar och fyll sedan på rummen utifrån dessa _Vevent:s.

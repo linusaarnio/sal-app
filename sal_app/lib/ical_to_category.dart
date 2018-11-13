@@ -20,10 +20,9 @@ Category createCategory(Stream<List<int>> inStream) {
           eventContents = "";
         } else if (line == "END:VEVENT") {
           if (_vevent == null) throw FormatException("Incorrect ical file! End before begin of vevent.");
-          print(eventContents);
           _vevent = null;
         } else if (_vevent != null) { // We are inside an event, so we should collect all data into a string
-          eventContents += line;
+          _vevent.process(line);
         }
       });
   return null;
@@ -40,14 +39,39 @@ class _Vevent {
   DateTime start;
   DateTime end;
   List<String> roomNames;
+  bool _isInLocation = false;
 
   /// process one line from the ical-format of the _Vevent
   void process(String line) {
-    var list = line.split("Lokal : ");
-    if (list.length > 1) {
-      for (var item in list) {
-        print(item);
+    var parts = line.split(":");
+    var firstWord = parts[0];
+    if (_isInLocation && firstWord == "DESCRIPTION") {
+      _isInLocation = false;
+    } else if (firstWord == "LOCATION" || _isInLocation) {
+      _isInLocation = true;
+      for (var part in parts) {
+        if (part != "LOCATION") {
+          part.trim();
+          part.replaceAll(new RegExp(r"\, Lokal"), ""); // TODO: Dela upp till lokaldelar
+          print(part);
+        }
       }
+    } else if (firstWord == "DTSTART") {
+      var dateString = parts[1];
+      var year = int.parse(dateString.substring(0,4));
+      var month = int.parse(dateString.substring(4,6));
+      var day = int.parse(dateString.substring(6, 8));
+      var hour = int.parse(dateString.substring(9, 11));
+      var minute = int.parse(dateString.substring(11, 13));
+      start = DateTime(year, month, day, hour, minute);
+    }  else if (firstWord == "DTEND") {
+      var dateString = parts[1];
+      var year = int.parse(dateString.substring(0,4));
+      var month = int.parse(dateString.substring(4,6));
+      var day = int.parse(dateString.substring(6, 8));
+      var hour = int.parse(dateString.substring(9, 11));
+      var minute = int.parse(dateString.substring(11, 13));
+      end = DateTime(year, month, day, hour, minute);
     }
   }
 }

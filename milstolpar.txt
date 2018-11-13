@@ -17,4 +17,4 @@ KLART(BASIC) Skapa kategorivisning för dagens datum
 - Snygga till allting, särskilt sådant benämnt BASIC
 
 
-TODO: parsern konstruerar strängar med all data från ett event. skapa _Vevent:s av dessa strängar och fyll sedan på rummen utifrån dessa _Vevent:s.
+TODO: Dela upp lokalsträngarna i parsern till salar och lägg in dem i listan.

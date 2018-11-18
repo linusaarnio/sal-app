@@ -1,6 +1,5 @@
 import 'room.dart';
 
-List<String> categoryNames = ["SU-salar", "PC-salar"];
 
 class Category {
   List<Room> rooms;

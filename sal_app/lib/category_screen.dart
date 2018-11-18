@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'category.dart';
 import 'tiles.dart';
+import 'utils.dart';
+import 'ical_to_category.dart';
 
-
+String scheduleBaseUrl = "https://cloud.timeedit.net/liu/web/schema/";
 /// The UI for choosing a category.
 class CategoryScreen extends StatefulWidget {
   _CategoryScreenSate createState() => _CategoryScreenSate();
@@ -23,7 +25,10 @@ class _CategoryScreenSate extends State<CategoryScreen> {
   ///Fills _categories with the finished Category:s, complete with filled Room:s.
   Future<void> _createCategories() async {
     for (var categoryName in categoryNames) {
-      _categories.add(Category(categoryName));
+      String urlString = scheduleBaseUrl + urlEndingForCategorySchedule[categoryName];
+      Uri url = Uri.parse(urlString);
+      Category category = await categoryFromUrl(url, categoryName);
+      _categories.add(category);
     }
   }
 

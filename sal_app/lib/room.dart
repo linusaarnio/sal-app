@@ -23,7 +23,7 @@ int timeSpanComparator(TimeSpan a, TimeSpan b) {
 bool overlapsWithAny(
     TimeSpan span, List<TimeSpan> bookings, int left, int right) {
   if (right >= left) {
-    var mid = left + ((right + left) / 2).floor();
+    var mid = left + ((right - left) / 2).floor();
     switch (timeSpanComparator(bookings[mid], span)) {
       case 0: // bookings[mid] overlaps with span
         return true;

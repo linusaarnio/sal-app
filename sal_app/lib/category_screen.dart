@@ -22,6 +22,7 @@ class _CategoryScreenSate extends State<CategoryScreen> {
     }
   }
 
+// THIS SHOULD NOT BE DONE HERE, INSTEAD CREATE A CATEGORY WHEN IT OPENS
   ///Fills _categories with the finished Category:s, complete with filled Room:s.
   Future<void> _createCategories() async {
     for (var categoryName in categoryNames) {

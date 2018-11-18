@@ -8,11 +8,10 @@ import 'utils.dart';
 ///Creates the category from an ical file in the form of a stream.
 Category createCategory(Stream<List<int>> inStream, String name) {
   Map<String, Room> rooms = {};
-  for (var room in categoryNames) {
+  for (var room in roomsInCategory[name]) {
     rooms[room] = Room(room);
   }
   _Vevent _vevent;
-  String eventContents;
 
   /// Here we process the ical file per vevent, for every vevent we add a booking for all the rooms involved.
   inStream
@@ -22,7 +21,6 @@ Category createCategory(Stream<List<int>> inStream, String name) {
         if (line == "BEGIN:VEVENT") {
           if (_vevent != null) throw FormatException("Incorrect ical file! Two begins before end of vevent.");
           _vevent = _Vevent(name);
-          eventContents = "";
         } else if (line == "END:VEVENT") {
           if (_vevent == null) throw FormatException("Incorrect ical file! End before begin of vevent.");
           for (var room in _vevent.roomNames) {

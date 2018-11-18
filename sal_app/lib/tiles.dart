@@ -63,9 +63,10 @@ class CategoryTile extends StatelessWidget {
 /// A tile which can either show just the time span, or a list of rooms with info about availability
 class ScheduleBlockTile extends StatefulWidget {
   final List<Room> rooms;
-  final int startHour;
+  final int startHour; 
+  int utcStartHour; // should be done better, doesn't account for summertime
 
-  ScheduleBlockTile(this.startHour, this.rooms);
+  ScheduleBlockTile(this.startHour, this.rooms) {utcStartHour = startHour -1;}
 
   @override
   _ScheduleBlockTileState createState() => _ScheduleBlockTileState();
@@ -112,14 +113,14 @@ class _ScheduleBlockTileState extends State<ScheduleBlockTile> {
             currentYear,
             currentMonth,
             currentDay,
-            widget.startHour,
+            widget.utcStartHour,// should be done better
             15,
           ),
           DateTime(
             currentYear,
             currentMonth,
             currentDay,
-            widget.startHour + 2,
+            widget.utcStartHour + 2, // should be done better
           ));
       roomtexts.add(Text(
         room.name,

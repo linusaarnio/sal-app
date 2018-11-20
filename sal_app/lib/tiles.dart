@@ -59,7 +59,7 @@ class CategoryTile extends StatelessWidget {
                     )))));
   }
 }
-
+/*
 /// A tile which can either show just the time span, or a list of rooms with info about availability
 class ScheduleBlockTile extends StatefulWidget {
   final List<Room> rooms;
@@ -132,7 +132,7 @@ class _ScheduleBlockTileState extends State<ScheduleBlockTile> {
     return Column(
       children: roomtexts,
     );
-  }
+  } 
 
   void _extendRoomList(BuildContext context) {
     setState(() {
@@ -158,3 +158,4 @@ class _ScheduleBlockTileState extends State<ScheduleBlockTile> {
     ));
   }
 }
+*/

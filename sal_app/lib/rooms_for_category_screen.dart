@@ -62,7 +62,9 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
   }
 
   Widget timeTile(BuildContext context, bool isStartTime) {
-    return Padding(
+    return Container(
+      color: Colors.blue,
+    child: Padding(
       padding: EdgeInsets.all(16.0),
       child: InkWell(
         onTap: () => changeTime(context, isStartTime),
@@ -72,7 +74,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
           textAlign: TextAlign.center,
         ),
       ),
-    );
+    ));
   }
 
   Widget timesRow(BuildContext context) {

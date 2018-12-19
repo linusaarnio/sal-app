@@ -2,7 +2,6 @@
 class TimeSpan {
   final DateTime begin;
   final DateTime end;
-
   const TimeSpan(this.begin, this.end);
 }
 

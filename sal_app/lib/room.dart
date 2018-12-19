@@ -1,4 +1,4 @@
-/// A timespan with a beginning and end. Always UTC
+/// A timespan with a beginning and end. Always UTC.
 class TimeSpan {
   final DateTime begin;
   final DateTime end;
@@ -18,7 +18,7 @@ int timeSpanComparator(TimeSpan a, TimeSpan b) {
 
 /// Finds if span overlaps with any of the bookings.
 /// Prerequisite: BOOKINGS HAS TO BE SORTED!
-/// Complexity: O(logN)
+/// Complexity: O(logN) <- DALG is useful.
 bool overlapsWithAny(
     TimeSpan span, List<TimeSpan> bookings, int left, int right) {
   if (right >= left) {

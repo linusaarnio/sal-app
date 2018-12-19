@@ -39,6 +39,7 @@ Category createCategory(Stream<List<int>> inStream, String name) {
   return Category.fromRoomList(name, roomList);
 }
 
+/// Given an url to an ical file for a category we can handle, this will create and return a future that resolve to that category.
 Future<Category> categoryFromUrl(Uri icalUrl, String categoryName) async {
   HttpClient client = HttpClient();
   var request = await client.getUrl(icalUrl);
@@ -95,18 +96,6 @@ class _Vevent {
     locationString = locationString.replaceAll(" ", ""); // Strip whitespace to make sure no names are broken because of linebreaks.
     for (var room in roomsInCategory[categoryName]) {
       if (locationString.contains(room)) roomNames.add(room); // This Vevent includes that room
-    }
-    /*
-    locationString = locationString
-    .replaceAll(new RegExp(r"LOCATION"), "")
-    .replaceAll(new RegExp(r'\\'), "")
-    .replaceAll(new RegExp(r','), "")
-    .replaceAll(new RegExp(r"Lokal"), "")
-    .replaceAll(new RegExp(r"L okal"), "")
-    .replaceAll(new RegExp(r"Lo kal"), "")
-    .replaceAll(new RegExp(r"Lok al"), "")
-    .replaceAll(new RegExp(r"Loka l"), "");*/
-    
-    
+    }    
   }
 }

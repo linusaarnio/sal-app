@@ -19,6 +19,7 @@ KLART(BASIC) Skapa kategorivisning för dagens datum
 
 TODO:
 - Fixa så att en kategori laddas in först när man öppnar den, och att man inte kan kolla tider före alla rum laddats in.  ANTAGLIGEN FIXAT
-- Fixa tiden så att den alltid är rätt med utc för en dagsvisning.
-- Se till att en sluttid inte får vara före en starttid då man väljer
-- Kolla upp var tiderna blir fel, den visar inte helt rätt. Blir inte utc av någon anledning.
+- Fixa tiden så att den alltid är rätt med utc för en dagsvisning. FIXAT
+- Se till att en sluttid inte får vara före en starttid då man väljer  FIXAT
+- Kolla upp var tiderna blir fel, den visar inte helt rätt. Blir inte utc av någon anledning. FIXAT
+- Fixa så att tiden ändras till första blocket om man inte är inne på idag!

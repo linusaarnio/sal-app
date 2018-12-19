@@ -16,9 +16,9 @@ class RoomsForCategoryScreen extends StatefulWidget {
 
 class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
   Category category;
-  DateTime date = DateTime.now(); // change this
-  TimeOfDay startTime = TimeOfDay.now(); // change this
-  TimeOfDay endTime = TimeOfDay(hour: 17, minute: 0);
+  DateTime date = DateTime.now(); 
+  TimeOfDay startTime; // change this
+  TimeOfDay endTime;
 
   Future<void> _createCategory() async {
     String urlString =
@@ -26,26 +26,54 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
     Uri url = Uri.parse(urlString);
     var tempCategory = await categoryFromUrl(url, widget.categoryName);
     setState(() {
-          category = tempCategory;
-        });
-       
+      category = tempCategory;
+    });
   }
 
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
     if (category == null) {
+      var nowHour = TimeOfDay.now().hour;
+      if (date.day != DateTime.now().day || date.month != DateTime.now().month) {
+        startTime = TimeOfDay(hour: 8, minute: 15,);
+      } 
+      else if (nowHour == 8) {
+            startTime = TimeOfDay(hour: 8, minute: 15,);
+      } else if (nowHour >= 19) {
+            startTime = TimeOfDay(hour: 19, minute: 15,);
+      } else {
+        for (var i = 0; i < startHours.length; ++i) {
+          if (startHours[i] > nowHour) {
+            startTime = TimeOfDay(hour: startHours[i-1], minute: 15,);
+            break;
+          }
+        }
+      }
+      endTime = TimeOfDay(hour: startTime.hour +2, minute: 0,);
       await _createCategory();
     }
+  }
+
+  bool endTimeBeforeStart() {
+    return (startTime.hour > endTime.hour ||
+        (startTime.hour == endTime.hour && startTime.minute > endTime.minute));
   }
 
   void changeTime(BuildContext context, bool isStartTime) async {
     var newTime = await showTimePicker(
         context: context, initialTime: isStartTime ? startTime : endTime);
     setState(() {
-      if (isStartTime)
+      if (isStartTime) {
         startTime = newTime ?? startTime;
-      else
+        if (endTimeBeforeStart()) {
+          endTime = TimeOfDay(hour: startTime.hour + 2, minute: 0);
+        }
+      } else {
         endTime = newTime ?? endTime;
+        if (endTimeBeforeStart()) {
+          startTime = TimeOfDay(hour: endTime.hour - 2, minute: 15);
+        }
+      }
     });
   }
 

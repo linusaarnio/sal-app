@@ -78,7 +78,7 @@ class _Vevent {
       var day = int.parse(dateString.substring(6, 8));
       var hour = int.parse(dateString.substring(9, 11));
       var minute = int.parse(dateString.substring(11, 13));
-      start = DateTime(year, month, day, hour, minute);
+      start = DateTime.utc(year, month, day, hour, minute);
     }  else if (firstWord == "DTEND") {
       var dateString = parts[1];
       var year = int.parse(dateString.substring(0,4));
@@ -86,7 +86,7 @@ class _Vevent {
       var day = int.parse(dateString.substring(6, 8));
       var hour = int.parse(dateString.substring(9, 11));
       var minute = int.parse(dateString.substring(11, 13));
-      end = DateTime(year, month, day, hour, minute);
+      end = DateTime.utc(year, month, day, hour, minute);
     }
   }
 

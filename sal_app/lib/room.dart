@@ -1,4 +1,4 @@
-/// A timespan with a beginning and end.
+/// A timespan with a beginning and end. Always UTC
 class TimeSpan {
   final DateTime begin;
   final DateTime end;
@@ -42,6 +42,7 @@ bool overlapsWithAny(
 class Room {
 
   String name;
+  //List of TimeSpans, in UTC
   List<TimeSpan> _bookings;
   bool _bookingsIsSorted = true;
   

@@ -2,24 +2,41 @@ import 'package:flutter/material.dart';
 import 'room.dart';
 import 'utils.dart';
 import 'tiles.dart';
+import 'category.dart';
+import 'ical_to_category.dart';
 
 class RoomsForCategoryScreen extends StatefulWidget {
-  final List<Room> rooms;
+  final String categoryName;
 
-  RoomsForCategoryScreen(this.rooms);
+  RoomsForCategoryScreen(this.categoryName);
 
   @override
-  _RoomsForCategoryScreenState createState() =>
-      _RoomsForCategoryScreenState(rooms);
+  _RoomsForCategoryScreenState createState() => _RoomsForCategoryScreenState();
 }
 
 class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
-  List<Room> rooms;
+  Category category;
   DateTime date = DateTime.now(); // change this
   TimeOfDay startTime = TimeOfDay.now(); // change this
   TimeOfDay endTime = TimeOfDay(hour: 17, minute: 0);
 
-  _RoomsForCategoryScreenState(this.rooms);
+  Future<void> _createCategory() async {
+    String urlString =
+        scheduleBaseUrl + urlEndingForCategorySchedule[widget.categoryName];
+    Uri url = Uri.parse(urlString);
+    var tempCategory = await categoryFromUrl(url, widget.categoryName);
+    setState(() {
+          category = tempCategory;
+        });
+       
+  }
+
+  Future<void> didChangeDependencies() async {
+    super.didChangeDependencies();
+    if (category == null) {
+      await _createCategory();
+    }
+  }
 
   void changeTime(BuildContext context, bool isStartTime) async {
     var newTime = await showTimePicker(
@@ -63,18 +80,18 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
 
   Widget timeTile(BuildContext context, bool isStartTime) {
     return Container(
-      color: Colors.blue,
-    child: Padding(
-      padding: EdgeInsets.all(16.0),
-      child: InkWell(
-        onTap: () => changeTime(context, isStartTime),
-        child: Text(
-          isStartTime ? startTime.format(context) : endTime.format(context),
-          style: Theme.of(context).textTheme.display1,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    ));
+        color: Colors.blue,
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: InkWell(
+            onTap: () => changeTime(context, isStartTime),
+            child: Text(
+              isStartTime ? startTime.format(context) : endTime.format(context),
+              style: Theme.of(context).textTheme.display1,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ));
   }
 
   Widget timesRow(BuildContext context) {
@@ -86,7 +103,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
 
   Widget _roomsBlock() {
     var roomtexts = <Text>[];
-    for (var room in rooms) {
+    for (var room in category.rooms) {
       var isFree = room.isFreeBetween(
           DateTime(
             date.year,
@@ -109,20 +126,26 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
             ),
       ));
     }
-    return Column(children: roomtexts,);
+    return Column(
+      children: roomtexts,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
-      child: ListView(
-        children: <Widget>[
-          dateTile(context),
-          timesRow(context),
-          _roomsBlock(),
-        ],
-      ),
+      child: (category != null)
+          ? ListView(
+              children: <Widget>[
+                dateTile(context),
+                timesRow(context),
+                _roomsBlock(),
+              ],
+            )
+          : LinearProgressIndicator(
+              value: null,
+            ),
     );
   }
 }

@@ -6,7 +6,6 @@ import 'tiles.dart';
 import 'utils.dart';
 import 'ical_to_category.dart';
 
-String scheduleBaseUrl = "https://cloud.timeedit.net/liu/web/schema/";
 /// The UI for choosing a category.
 class CategoryScreen extends StatefulWidget {
   _CategoryScreenSate createState() => _CategoryScreenSate();
@@ -15,6 +14,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenSate extends State<CategoryScreen> {
   List<Category> _categories = <Category>[];
 
+/*
   Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
     if (_categories.isEmpty) {
@@ -31,16 +31,16 @@ class _CategoryScreenSate extends State<CategoryScreen> {
       Category category = await categoryFromUrl(url, categoryName);
       _categories.add(category);
     }
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
           itemBuilder: (BuildContext context, int i) {
-            var category = _categories[i];
-            return CategoryTile(category);
+            var categoryName = categoryNames[i];
+            return CategoryTile(categoryName);
           },
-          itemCount: _categories.length,
+          itemCount: categoryNames.length,
         );
   }
 }

@@ -6,6 +6,9 @@ int currentYear = DateTime.now().year;
 int currentMonth = DateTime.now().month;
 int currentDay = DateTime.now().day;
 
+String scheduleBaseUrl = "https://cloud.timeedit.net/liu/web/schema/";
+
+
 List<String> categoryNames = ["SU-salar"];
 Map<String, List<String>> roomsInCategory = {
   "SU-salar": [

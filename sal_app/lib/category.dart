@@ -9,6 +9,8 @@ class Category {
 
   Category.fromRoomList(this.name, this.rooms); 
 
+  
+
   List<Room> freeRoomsBetween(DateTime begin, DateTime end) {
     List<Room> freeRooms = <Room>[];
     for (var room in rooms) {

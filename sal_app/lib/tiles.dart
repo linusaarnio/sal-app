@@ -12,18 +12,18 @@ double _paddingBetweenIconAndText = 70.0;
 
 /// The UI for a single category in categories display
 class CategoryTile extends StatelessWidget {
-  final Category _category;
-  CategoryTile(this._category);
+  final String _categoryName;
+  CategoryTile(this._categoryName);
 
   void _navigateToRoomsForCategory(BuildContext context) async{
     Navigator.of(context)
         .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(_category.name),
+          title: Text(_categoryName),
           elevation: 1.0,
         ),
-        body: RoomsForCategoryScreen(_category.rooms),
+        body: RoomsForCategoryScreen(_categoryName),
       );
     }));
   }
@@ -50,7 +50,7 @@ class CategoryTile extends StatelessWidget {
                         ),
                         Center(
                           child: Text(
-                            _category.name,
+                            _categoryName,
                             style: Theme.of(context).textTheme.display1,
                             //textAlign: TextAlign.center,
                           ),

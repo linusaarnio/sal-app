@@ -56,20 +56,21 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         for (var i = 0; i < startHours.length; ++i) {
           if (startHours[i] > nowHour) {
             startTime = TimeOfDay(
-              hour: startHours[i - 1],  // Starthour will be the latest passed hour.
+              hour: startHours[
+                  i - 1], // Starthour will be the latest passed hour.
               minute: 15,
-            ); 
+            );
             break;
           }
         }
       }
-        endTime = TimeOfDay(
-          hour: startTime.hour + 2,
-          minute: 0,
-        );
-        await _createCategory();
-      }
+      endTime = TimeOfDay(
+        hour: startTime.hour + 2,
+        minute: 0,
+      );
+      await _createCategory();
     }
+  }
 
   /// Is the chosen date todays date?
   bool viewingToday() {
@@ -85,7 +86,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         (startTime.hour == endTime.hour && startTime.minute > endTime.minute));
   }
 
-  /// Shows a time picker, and sets either starttime or endtime (depending on the parameter isStartTime) 
+  /// Shows a time picker, and sets either starttime or endtime (depending on the parameter isStartTime)
   /// to the chosen time.
   /// If the user sets endtime before starttime, it tries to ajust the not set time to fit normal schedule block times.
   void changeTime(BuildContext context, bool isStartTime) async {
@@ -106,7 +107,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
     });
   }
 
-  /// Shows a datepicker and sets the date to the chosen date (you can choose earliest yesterday and latest two weeks ahead). 
+  /// Shows a datepicker and sets the date to the chosen date (you can choose earliest yesterday and latest two weeks ahead).
   /// Sets times to the first schedule block.
   void changeDate(BuildContext context) async {
     var newDate = await showDatePicker(
@@ -142,19 +143,17 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
 
   /// A tile that shows a time, will change either start or end time on click (depending on parameter isStartTime)
   Widget timeTile(BuildContext context, bool isStartTime) {
-    return Container(
-        color: Colors.blue,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: InkWell(
-            onTap: () => changeTime(context, isStartTime),
-            child: Text(
-              isStartTime ? startTime.format(context) : endTime.format(context),
-              style: Theme.of(context).textTheme.display1,
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ));
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: InkWell(
+        onTap: () => changeTime(context, isStartTime),
+        child: Text(
+          isStartTime ? startTime.format(context) : endTime.format(context),
+          style: Theme.of(context).textTheme.display1,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 
   /// The row of both start time and end time

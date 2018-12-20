@@ -2,46 +2,80 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'category.dart';
-import 'tiles.dart';
+import 'rooms_for_category_screen.dart';
 import 'utils.dart';
-import 'ical_to_category.dart';
 
-String scheduleBaseUrl = "https://cloud.timeedit.net/liu/web/schema/";
-/// The UI for choosing a category.
+/// A screen that shows a list of categories and takes you to the rooms screen for selected category when you click it.
 class CategoryScreen extends StatefulWidget {
   _CategoryScreenSate createState() => _CategoryScreenSate();
 }
 
 class _CategoryScreenSate extends State<CategoryScreen> {
-  List<Category> _categories = <Category>[];
-
-  Future<void> didChangeDependencies() async {
-    super.didChangeDependencies();
-    if (_categories.isEmpty) {
-      await _createCategories();
-    }
-  }
-
-// THIS SHOULD NOT BE DONE HERE, INSTEAD CREATE A CATEGORY WHEN IT OPENS
-  ///Fills _categories with the finished Category:s, complete with filled Room:s.
-  Future<void> _createCategories() async {
-    for (var categoryName in categoryNames) {
-      String urlString = scheduleBaseUrl + urlEndingForCategorySchedule[categoryName];
-      Uri url = Uri.parse(urlString);
-      Category category = await categoryFromUrl(url, categoryName);
-      _categories.add(category);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
           itemBuilder: (BuildContext context, int i) {
-            var category = _categories[i];
-            return CategoryTile(category);
+            var categoryName = categoryNames[i];
+            return CategoryTile(categoryName);
           },
-          itemCount: _categories.length,
+          itemCount: categoryNames.length,
         );
   }
 }
 
+/// The padding all around a category tile.
+double _basePadding = 16.0;
+/// The padding between icon and text in a category tile.
+double _paddingBetweenIconAndText = 70.0;
+
+/// A tile showing a single category name.
+/// Navigates to the rooms screen for named category on click.
+class CategoryTile extends StatelessWidget {
+  final String _categoryName;
+  CategoryTile(this._categoryName);
+
+  void _navigateToRoomsForCategory(BuildContext context) async{
+    Navigator.of(context)
+        .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(_categoryName),
+          elevation: 1.0,
+        ),
+        body: RoomsForCategoryScreen(_categoryName),
+      );
+    }));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+        child: Container(
+            //color: Colors.blue[100],
+            child: InkWell(
+                onTap: () => _navigateToRoomsForCategory(context),
+                child: Padding(
+                    padding: EdgeInsets.all(_basePadding),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              bottom: 8.0,
+                              left: 8.0,
+                              right: _paddingBetweenIconAndText,
+                              top: 8.0),
+                          child: Icon(Icons.code),
+                        ),
+                        Center(
+                          child: Text(
+                            _categoryName,
+                            style: Theme.of(context).textTheme.display1,
+                            //textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    )))));
+  }
+}

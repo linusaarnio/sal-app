@@ -1,8 +1,7 @@
-/// A timespan with a beginning and end.
+/// A timespan with a beginning and end. Always UTC.
 class TimeSpan {
   final DateTime begin;
   final DateTime end;
-
   const TimeSpan(this.begin, this.end);
 }
 
@@ -19,7 +18,7 @@ int timeSpanComparator(TimeSpan a, TimeSpan b) {
 
 /// Finds if span overlaps with any of the bookings.
 /// Prerequisite: BOOKINGS HAS TO BE SORTED!
-/// Complexity: O(logN)
+/// Complexity: O(logN) <- DALG is useful.
 bool overlapsWithAny(
     TimeSpan span, List<TimeSpan> bookings, int left, int right) {
   if (right >= left) {
@@ -43,6 +42,7 @@ bool overlapsWithAny(
 class Room {
 
   String name;
+  //List of TimeSpans, in UTC
   List<TimeSpan> _bookings;
   bool _bookingsIsSorted = true;
   

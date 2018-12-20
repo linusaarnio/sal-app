@@ -1,0 +1,3 @@
+*rooms_for_category_screen: dateTile, timeTile, timesRow, _roomsBlock
+*category_screen: categoryTile
+*main: allt! (denna är fortfarande exakt samma som i demot, bara att jag pluggat in categoryscreen som innehåll, pinsamt...)

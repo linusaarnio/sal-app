@@ -124,19 +124,28 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
 
   /// The tile that shows the chosen date, will show a time picker to change date on click.
   Widget dateTile(BuildContext context) {
+    //double arrowSize <- här ska jag ha storleken som pilarna kan dela på
     return Padding(
       padding: EdgeInsets.all(16.0),
-      child: InkWell(
-        onTap: () => changeDate(context),
-        child: Text(
-          date.year.toString() +
-              "-" +
-              date.month.toString() +
-              "-" +
-              date.day.toString(),
-          style: Theme.of(context).textTheme.display1,
-          textAlign: TextAlign.center,
-        ),
+      child: Row(
+        children: <Widget>[
+          InkWell(
+            child: Icon(Icons.arrow_left),
+          ),
+          InkWell(
+            onTap: () => changeDate(context),
+            child: Text(
+              date.year.toString() +
+                  "-" +
+                  date.month.toString() +
+                  "-" +
+                  date.day.toString(),
+              style: Theme.of(context).textTheme.display1,
+              textAlign: TextAlign.center, 
+            ),
+          ),
+          InkWell(child: Icon(Icons.arrow_right, size: 50,), )
+        ],
       ),
     );
   }
@@ -183,43 +192,47 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
             endTime.hour,
             endTime.minute,
           ));
-      roomtexts.add(Container(color: isFree ?  Colors.lime[100] : Colors.orange[100], child: ListTile(
-        title: Text(
-          room.name,
-          style: Theme.of(context).textTheme.display1.apply(
-                color: isFree ? Colors.green[500] : Colors.red,
-              ),
-        ),
-        leading: Icon(isFree ? Icons.favorite : Icons.error, color: isFree ? Colors.green[500] : Colors.red),
-      )));
+      roomtexts.add(Container(
+          color: isFree ? Colors.lime[100] : Colors.orange[100],
+          child: ListTile(
+            title: Text(
+              room.name,
+              style: Theme.of(context).textTheme.display1.apply(
+                    color: isFree ? Colors.green[500] : Colors.red,
+                  ),
+            ),
+            leading: Icon(isFree ? Icons.favorite : Icons.error,
+                color: isFree ? Colors.green[500] : Colors.red),
+          )));
       //roomtexts.add(Divider(color: Colors.black38,));
     }
     return Container(
         padding: EdgeInsets.only(top: 10, bottom: 50, left: 50, right: 50),
         child: Card(
-          elevation: 10,
-         // color: Colors.teal[200],
+            elevation: 10,
+            // color: Colors.teal[200],
             child: Column(
-          children: roomtexts,
-        )));
+              children: roomtexts,
+            )));
   }
 
   Widget _dateTimeBlock(BuildContext context) {
     return Container(
         padding: EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 20),
         child: Card(
-          elevation: 5,
+            elevation: 5,
             color: Colors.lime[300],
             child: Column(
               children: <Widget>[dateTile(context), timesRow(context)],
-        )));
+            )));
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
       child: (category != null)
-          ?  ListView(
+          ? ListView(
               children: <Widget>[
                 _dateTimeBlock(context),
                 _roomsBlock(),

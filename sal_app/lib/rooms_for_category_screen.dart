@@ -166,7 +166,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
 
   /// The block which shows the rooms and indicates wheter they are free or not for the chosen date and times.
   Widget _roomsBlock() {
-    var roomtexts = <Text>[];
+    var roomtexts = <Widget>[];
     for (var room in category.rooms) {
       var isFree = room.isFreeBetween(
           DateTime(
@@ -183,27 +183,45 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
             endTime.hour,
             endTime.minute,
           ));
-      roomtexts.add(Text(
-        room.name,
-        style: Theme.of(context).textTheme.display1.apply(
-              color: isFree ? Colors.green : Colors.red,
-            ),
-      ));
+      roomtexts.add(Container(color: isFree ?  Colors.lime[100] : Colors.orange[100], child: ListTile(
+        title: Text(
+          room.name,
+          style: Theme.of(context).textTheme.display1.apply(
+                color: isFree ? Colors.green[500] : Colors.red,
+              ),
+        ),
+        leading: Icon(isFree ? Icons.favorite : Icons.error, color: isFree ? Colors.green[500] : Colors.red),
+      )));
+      //roomtexts.add(Divider(color: Colors.black38,));
     }
-    return Column(
-      children: roomtexts,
-    );
+    return Container(
+        padding: EdgeInsets.only(top: 10, bottom: 50, left: 50, right: 50),
+        child: Card(
+          elevation: 10,
+         // color: Colors.teal[200],
+            child: Column(
+          children: roomtexts,
+        )));
   }
 
+  Widget _dateTimeBlock(BuildContext context) {
+    return Container(
+        padding: EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 20),
+        child: Card(
+          elevation: 5,
+            color: Colors.lime[300],
+            child: Column(
+              children: <Widget>[dateTile(context), timesRow(context)],
+        )));
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
       child: (category != null)
-          ? ListView(
+          ?  ListView(
               children: <Widget>[
-                dateTile(context),
-                timesRow(context),
+                _dateTimeBlock(context),
                 _roomsBlock(),
               ],
             )

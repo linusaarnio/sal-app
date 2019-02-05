@@ -80,6 +80,15 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         date.year == today.year);
   }
 
+  bool viewingLastAllowedDate() {
+    DateTime lastDay = DateTime.now().add(Duration(
+      days: 14,
+    ));
+    return (date.day == lastDay.day &&
+        date.month == lastDay.month &&
+        date.year == lastDay.year);
+  }
+
   /// Is the end time set to be before the start time?
   bool endTimeBeforeStart() {
     return (startTime.hour > endTime.hour ||
@@ -107,14 +116,20 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
     });
   }
 
-  /// Shows a datepicker and sets the date to the chosen date (you can choose earliest yesterday and latest two weeks ahead).
+  /// Changes date with duration.
+  /// If duration = null,shows a datepicker and sets the date to the chosen date (you can choose earliest yesterday and latest two weeks ahead).
   /// Sets times to the first schedule block.
-  void changeDate(BuildContext context) async {
-    var newDate = await showDatePicker(
-        context: context,
-        firstDate: DateTime.now().subtract(Duration(days: 1)),
-        lastDate: DateTime.now().add(new Duration(days: 14)),
-        initialDate: date);
+  void changeDate(BuildContext context, Duration duration) async {
+    var newDate;
+    if (duration == null) {
+      newDate = await showDatePicker(
+          context: context,
+          firstDate: DateTime.now().subtract(Duration(days: 1)),
+          lastDate: DateTime.now().add(new Duration(days: 14)),
+          initialDate: date);
+    } else {
+      newDate = date.add(duration);
+    }
     setState(() {
       date = newDate ?? date;
       startTime = TimeOfDay(hour: 8, minute: 15);
@@ -124,29 +139,42 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
 
   /// The tile that shows the chosen date, will show a time picker to change date on click.
   Widget dateTile(BuildContext context) {
-    //double arrowSize <- här ska jag ha storleken som pilarna kan dela på
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Row(
-        children: <Widget>[
-          InkWell(
-            child: Icon(Icons.arrow_left),
+    double arrowSize = 50;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        InkWell(
+          child: Icon(
+            Icons.arrow_left,
+            size: arrowSize,
+            color: viewingToday() ? Colors.grey : Colors.black,
           ),
-          InkWell(
-            onTap: () => changeDate(context),
-            child: Text(
-              date.year.toString() +
-                  "-" +
-                  date.month.toString() +
-                  "-" +
-                  date.day.toString(),
-              style: Theme.of(context).textTheme.display1,
-              textAlign: TextAlign.center, 
-            ),
+          onTap: () =>
+              viewingToday() ? null : changeDate(context, Duration(days: -1)),
+        ),
+        InkWell(
+          onTap: () => changeDate(context, null),
+          child: Text(
+            date.year.toString() +
+                "-" +
+                date.month.toString() +
+                "-" +
+                date.day.toString(),
+            style: Theme.of(context).textTheme.display1,
+            textAlign: TextAlign.center,
           ),
-          InkWell(child: Icon(Icons.arrow_right, size: 50,), )
-        ],
-      ),
+        ),
+        InkWell(
+          child: Icon(
+            Icons.arrow_right,
+            size: arrowSize,
+            color: viewingLastAllowedDate() ? Colors.grey : Colors.black,
+          ),
+          onTap: () => viewingLastAllowedDate()
+              ? null
+              : changeDate(context, Duration(days: 1)),
+        )
+      ],
     );
   }
 
@@ -201,7 +229,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
                     color: isFree ? Colors.green[500] : Colors.red,
                   ),
             ),
-            leading: Icon(isFree ? Icons.favorite : Icons.error,
+            leading: Icon(isFree ? Icons.check_circle : Icons.error,
                 color: isFree ? Colors.green[500] : Colors.red),
           )));
       //roomtexts.add(Divider(color: Colors.black38,));
@@ -221,9 +249,12 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         padding: EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 20),
         child: Card(
             elevation: 5,
-            color: Colors.lime[300],
+            color: Colors.teal[50],
             child: Column(
-              children: <Widget>[dateTile(context), timesRow(context)],
+              children: <Widget>[
+                Center(child: dateTile(context)),
+                timesRow(context)
+              ],
             )));
   }
 

@@ -1,4 +1,6 @@
 import 'room.dart';
+import 'package:flutter/material.dart';
+
 
 /// This is a file containing useful data structures.
 
@@ -13,7 +15,8 @@ int currentDay = DateTime.now().day;
 String scheduleBaseUrl = "https://cloud.timeedit.net/liu/web/schema/";
 
 
-List<String> categoryNames = ["SU-salar"];
+List<String> categoryNames = ["SU-salar", "ISYtan", "ISY-salar"];
+
 Map<String, List<String>> roomsInCategory = {
   "SU-salar": [
     "SU00",
@@ -28,10 +31,52 @@ Map<String, List<String>> roomsInCategory = {
     "SU14",
     "SU15/16",
     "SU17/18",
+  ],
+  "ISYtan": [
+    "ISYtan1",
+    "ISYtan2",
+    "ISYtan3",
+    "ISYtan4",
+    "ISYtan5",
+    "ISYtan6",
+    "ISYtan7",
+    "ISYtan8",
+    "ISYtan9",
+    "ISYtan10"
+  ],
+  "ISY-salar": [
+    "RT1",
+    "RT2",
+    "RT3",
+    "RT4",
+    "TRANSISTOR",
+    "ALGO",
+    "BUSS",
+    "DIODEN",
+    "FREJ",
+    "GRIN",
+    "MEAD",
+    "MUX1",
+    "MUX2",
+    "MUX3",
+    "MUX4",
+    "RESISTORN",
+    "SOUT",
+    "TYRISTORN"
+            
   ]
 };
 
 /// The url ending for schedule urls, append to the base url in this file to create a complete schedule url.
 Map<String, String> urlEndingForCategorySchedule = {
-  "SU-salar": "ri657Q5QU95ZYYQ5Q367Qjugy4Z5WY75nb5SZY.ics"
+  "SU-salar": "ri657Q5QU95ZYYQ5Q367Qjugy4Z5WY75nb5SZY.ics",
+  "ISYtan" : "ri684Q12Y66Z65Q5Y161X286y6Z652Y894Y9429Q517918XX2656346456199XY84215865X4Y6Y698X1436166X3185935460X98Y6636Z55Q37786X0Y4497Q1Yn95486.ics",
+  "ISY-salar": "ri697QYQSQ3Z9YQ5nI6Z054gy7Z7ZZZX4YQ54Y6.ics"
+};
+
+
+Map<String, IconData> iconForCategory = {
+  "SU-salar" : Icons.code,
+  "ISYtan": Icons.people_outline,
+  "ISY-salar": Icons.lightbulb_outline,
 };

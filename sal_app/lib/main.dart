@@ -23,9 +23,10 @@ class MyApp extends StatelessWidget {
         ),
         home: Scaffold(
           appBar: AppBar(
-            //backgroundColor: Colors.blue[100],
+            backgroundColor: Colors.lime[50],
             title: Text(
               "Kategorier",
+              style: TextStyle(color: Colors.black),
             ),
             elevation: 1.0,
           ),

@@ -12,20 +12,53 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenSate extends State<CategoryScreen> {
 
+void _navigateToRoomsForCategory(BuildContext context, String categoryName) async {
+      Navigator.of(context)
+          .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.lime[50],
+            iconTheme: IconThemeData(color: Colors.black),
+            title: Text(
+              categoryName,
+              style: TextStyle(color: Colors.black),
+            ),
+            elevation: 1.0,
+          ),
+          body: RoomsForCategoryScreen(categoryName),
+        );
+      }));
+    }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-          itemBuilder: (BuildContext context, int i) {
-            var categoryName = categoryNames[i];
-            return CategoryTile(categoryName);
-          },
-          itemCount: categoryNames.length,
-        );
+    return Container(
+      padding: EdgeInsets.all(16),
+        child: Card(
+            elevation: 10,
+            color: Colors.teal[100],
+            child: ListView.builder(
+              itemBuilder: (BuildContext context, int i) {
+                var categoryName = categoryNames[i];
+                return ListTile(
+                  onTap: () => _navigateToRoomsForCategory(context, categoryName),
+                  title: Text(categoryName,
+                  style: Theme.of(context).textTheme.display1),
+                  leading: Icon(iconForCategory[categoryName], size: 32,),
+                );
+              },
+              itemCount: categoryNames.length,
+
+              shrinkWrap: true,
+            )));
   }
 }
 
+  
+
 /// The padding all around a category tile.
 double _basePadding = 16.0;
+
 /// The padding between icon and text in a category tile.
 double _paddingBetweenIconAndText = 70.0;
 
@@ -35,12 +68,17 @@ class CategoryTile extends StatelessWidget {
   final String _categoryName;
   CategoryTile(this._categoryName);
 
-  void _navigateToRoomsForCategory(BuildContext context) async{
+  void _navigateToRoomsForCategory(BuildContext context) async {
     Navigator.of(context)
         .push(MaterialPageRoute<Null>(builder: (BuildContext context) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(_categoryName),
+          backgroundColor: Colors.lime[50],
+          iconTheme: IconThemeData(color: Colors.black),
+          title: Text(
+            _categoryName,
+            style: TextStyle(color: Colors.black),
+          ),
           elevation: 1.0,
         ),
         body: RoomsForCategoryScreen(_categoryName),
@@ -52,7 +90,7 @@ class CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
         child: Container(
-            //color: Colors.blue[100],
+            color: Colors.teal[100],
             child: InkWell(
                 onTap: () => _navigateToRoomsForCategory(context),
                 child: Padding(

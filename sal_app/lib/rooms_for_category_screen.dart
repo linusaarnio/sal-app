@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'utils.dart';
 import 'category.dart';
 import 'ical_to_category.dart';
+import 'dart:async';
+
 
 /// The screen showing which rooms are free for a chosen category.
 class RoomsForCategoryScreen extends StatefulWidget {
@@ -69,8 +71,11 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         minute: 0,
       );
       await _createCategory();
+      
     }
   }
+
+
 
   /// Is the chosen date todays date?
   bool viewingToday() {

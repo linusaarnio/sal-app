@@ -43,8 +43,8 @@ void _navigateToRoomsForCategory(BuildContext context, String categoryName) asyn
                 return ListTile(
                   onTap: () => _navigateToRoomsForCategory(context, categoryName),
                   title: Text(categoryName,
-                  style: Theme.of(context).textTheme.display1),
-                  leading: Icon(iconForCategory[categoryName], size: 32,),
+                  style: Theme.of(context).textTheme.display1.apply(fontSizeFactor: 0.6)),
+                  leading: Icon(iconForCategory[categoryName], size: 25,),
                 );
               },
               itemCount: categoryNames.length,
@@ -109,7 +109,7 @@ class CategoryTile extends StatelessWidget {
                         Center(
                           child: Text(
                             _categoryName,
-                            style: Theme.of(context).textTheme.display1,
+                            style: Theme.of(context).textTheme.display1.apply(),
                             //textAlign: TextAlign.center,
                           ),
                         ),

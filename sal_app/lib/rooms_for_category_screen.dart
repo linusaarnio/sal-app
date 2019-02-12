@@ -4,6 +4,10 @@ import 'category.dart';
 import 'ical_to_category.dart';
 import 'dart:async';
 
+Color activeArrowColor = Colors.grey[600];
+Color disabledArrowColor = Colors.grey[300];
+double fontSizeFactor = 0.5;
+
 
 /// The screen showing which rooms are free for a chosen category.
 class RoomsForCategoryScreen extends StatefulWidget {
@@ -22,7 +26,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
   TimeOfDay startTime; // change this
   TimeOfDay endTime;
 
-  /// Asyncrhonously creates the category from ical, will fail without internet connection.
+  /// Asynchronously creates the category from ical, will fail without internet connection.
   Future<void> _createCategory() async {
     String urlString =
         scheduleBaseUrl + urlEndingForCategorySchedule[widget.categoryName];
@@ -71,11 +75,8 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         minute: 0,
       );
       await _createCategory();
-      
     }
   }
-
-
 
   /// Is the chosen date todays date?
   bool viewingToday() {
@@ -85,6 +86,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         date.year == today.year);
   }
 
+  /// Is the chosen date the last date we have info for?
   bool viewingLastAllowedDate() {
     DateTime lastDay = DateTime.now().add(Duration(
       days: 14,
@@ -92,6 +94,16 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
     return (date.day == lastDay.day &&
         date.month == lastDay.month &&
         date.year == lastDay.year);
+  }
+
+  /// Is the chosen time at or before the first schedule block?
+  bool viewingFirstBlock() {
+    return startTime.hour <= startHours[0];
+  }
+
+  /// Is the chosen time at or after the last schedule block?
+  bool viewingLastBlock() {
+    return startTime.hour >= startHours[startHours.length - 1];
   }
 
   /// Is the end time set to be before the start time?
@@ -121,6 +133,41 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
     });
   }
 
+  /// Switches to the schedule block before the chosen starthour.
+  void previousScheduleBlock() {
+    int nowHour = startTime.hour;
+    for (var i = 1; i < startHours.length; ++i) {
+      if (startHours[i] >= nowHour) {
+        setState(() {
+          startTime = TimeOfDay(
+            hour:
+                startHours[i - 1], // Starthour will be the latest passed hour.
+            minute: 15,
+          );
+          endTime = TimeOfDay(hour: startTime.hour + 2, minute: 0);
+        });
+        break;
+      }
+    }
+  }
+
+  /// Switches to the schedule block after the chosen starthour.
+  void nextScheduleBlock() {
+    int nowHour = startTime.hour;
+    for (var i = 1; i < startHours.length; ++i) {
+      if (startHours[i] > nowHour) {
+        setState(() {
+          startTime = TimeOfDay(
+            hour: startHours[i], // Starthour will be the latest passed hour.
+            minute: 15,
+          );
+          endTime = TimeOfDay(hour: startTime.hour + 2, minute: 0);
+        });
+        break;
+      }
+    }
+  }
+
   /// Changes date with duration.
   /// If duration = null,shows a datepicker and sets the date to the chosen date (you can choose earliest yesterday and latest two weeks ahead).
   /// Sets times to the first schedule block.
@@ -144,7 +191,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
 
   /// The tile that shows the chosen date, will show a time picker to change date on click.
   Widget dateTile(BuildContext context) {
-    double arrowSize = 50;
+    double arrowSize = 40;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -152,7 +199,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
           child: Icon(
             Icons.arrow_left,
             size: arrowSize,
-            color: viewingToday() ? Colors.grey : Colors.black,
+            color: viewingToday() ? disabledArrowColor : activeArrowColor,
           ),
           onTap: () =>
               viewingToday() ? null : changeDate(context, Duration(days: -1)),
@@ -165,7 +212,8 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
                 date.month.toString() +
                 "-" +
                 date.day.toString(),
-            style: Theme.of(context).textTheme.display1,
+            style:
+                Theme.of(context).textTheme.display1.apply(fontSizeFactor: fontSizeFactor),
             textAlign: TextAlign.center,
           ),
         ),
@@ -173,7 +221,9 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
           child: Icon(
             Icons.arrow_right,
             size: arrowSize,
-            color: viewingLastAllowedDate() ? Colors.grey : Colors.black,
+            color: viewingLastAllowedDate()
+                ? disabledArrowColor
+                : activeArrowColor,
           ),
           onTap: () => viewingLastAllowedDate()
               ? null
@@ -186,12 +236,13 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
   /// A tile that shows a time, will change either start or end time on click (depending on parameter isStartTime)
   Widget timeTile(BuildContext context, bool isStartTime) {
     return Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: EdgeInsets.only(top: 4, bottom: 4),
       child: InkWell(
         onTap: () => changeTime(context, isStartTime),
         child: Text(
           isStartTime ? startTime.format(context) : endTime.format(context),
-          style: Theme.of(context).textTheme.display1,
+          style:
+              Theme.of(context).textTheme.display1.apply(fontSizeFactor: fontSizeFactor),
           textAlign: TextAlign.center,
         ),
       ),
@@ -200,9 +251,28 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
 
   /// The row of both start time and end time
   Widget timesRow(BuildContext context) {
+    double iconSize = 40;
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      IconButton(
+        icon: Icon(Icons.arrow_left,
+            size: iconSize,
+            color: viewingFirstBlock() ? disabledArrowColor : activeArrowColor),
+        onPressed: () => previousScheduleBlock(),
+      ),
       timeTile(context, true),
+      Text(
+        " - ",
+        style: Theme.of(context).textTheme.display1.apply(),
+      ),
       timeTile(context, false),
+      IconButton(
+        icon: Icon(
+          Icons.arrow_right,
+          size: iconSize,
+          color: viewingLastBlock() ? disabledArrowColor : activeArrowColor,
+        ),
+        onPressed: () => nextScheduleBlock(),
+      ),
     ]);
   }
 
@@ -232,6 +302,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
               room.name,
               style: Theme.of(context).textTheme.display1.apply(
                     color: isFree ? Colors.green[500] : Colors.red,
+                    fontSizeFactor: fontSizeFactor,
                   ),
             ),
             leading: Icon(isFree ? Icons.check_circle : Icons.error,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'room.dart';
 import 'category_screen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => runApp(new MyApp());
 
@@ -9,6 +10,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+        localizationsDelegates: [
+          // ... app-specific localization delegate[s] here
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en', 'US'), // English
+          const Locale('sv', 'SE'), // Hebrew
+          // ... other locales the app supports
+        ],
         title: 'Flutter Demo',
         theme: new ThemeData(
             // This is the theme of your application.

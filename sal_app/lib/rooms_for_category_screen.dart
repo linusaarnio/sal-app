@@ -3,11 +3,11 @@ import 'utils.dart';
 import 'category.dart';
 import 'ical_to_category.dart';
 import 'dart:async';
+import 'dart:ui';
 
 Color activeArrowColor = Colors.grey[600];
 Color disabledArrowColor = Colors.grey[300];
 double fontSizeFactor = 0.5;
-
 
 /// The screen showing which rooms are free for a chosen category.
 class RoomsForCategoryScreen extends StatefulWidget {
@@ -117,7 +117,9 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
   /// If the user sets endtime before starttime, it tries to ajust the not set time to fit normal schedule block times.
   void changeTime(BuildContext context, bool isStartTime) async {
     var newTime = await showTimePicker(
-        context: context, initialTime: isStartTime ? startTime : endTime);
+      context: context,
+      initialTime: isStartTime ? startTime : endTime,
+    );
     setState(() {
       if (isStartTime) {
         startTime = newTime ?? startTime;
@@ -146,15 +148,22 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
           );
           endTime = TimeOfDay(hour: startTime.hour + 2, minute: 0);
         });
-        break;
+        return;
       }
     }
+    setState(() {
+      startTime = TimeOfDay(
+        hour: startHours[startHours.length - 1],
+        minute: 15,
+      );
+      endTime = TimeOfDay(hour: startTime.hour + 2, minute: 0);
+    });
   }
 
   /// Switches to the schedule block after the chosen starthour.
   void nextScheduleBlock() {
     int nowHour = startTime.hour;
-    for (var i = 1; i < startHours.length; ++i) {
+    for (var i = 0; i < startHours.length; ++i) {
       if (startHours[i] > nowHour) {
         setState(() {
           startTime = TimeOfDay(
@@ -175,10 +184,11 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
     var newDate;
     if (duration == null) {
       newDate = await showDatePicker(
-          context: context,
-          firstDate: DateTime.now().subtract(Duration(days: 1)),
-          lastDate: DateTime.now().add(new Duration(days: 14)),
-          initialDate: date);
+        context: context,
+        firstDate: DateTime.now().subtract(Duration(days: 1)),
+        lastDate: DateTime.now().add(new Duration(days: 14)),
+        initialDate: date,
+      );
     } else {
       newDate = date.add(duration);
     }
@@ -212,8 +222,10 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
                 date.month.toString() +
                 "-" +
                 date.day.toString(),
-            style:
-                Theme.of(context).textTheme.display1.apply(fontSizeFactor: fontSizeFactor),
+            style: Theme.of(context)
+                .textTheme
+                .display1
+                .apply(fontSizeFactor: fontSizeFactor),
             textAlign: TextAlign.center,
           ),
         ),
@@ -241,8 +253,10 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         onTap: () => changeTime(context, isStartTime),
         child: Text(
           isStartTime ? startTime.format(context) : endTime.format(context),
-          style:
-              Theme.of(context).textTheme.display1.apply(fontSizeFactor: fontSizeFactor),
+          style: Theme.of(context)
+              .textTheme
+              .display1
+              .apply(fontSizeFactor: fontSizeFactor),
           textAlign: TextAlign.center,
         ),
       ),

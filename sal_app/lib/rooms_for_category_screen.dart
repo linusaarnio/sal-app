@@ -309,29 +309,25 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
             endTime.hour,
             endTime.minute,
           ));
-      roomtexts.add(Container(
-          color: isFree ? Colors.lime[100] : Colors.orange[100],
-          child: ListTile(
-            title: Text(
-              room.name,
-              style: Theme.of(context).textTheme.display1.apply(
-                    color: isFree ? Colors.green[500] : Colors.red,
-                    fontSizeFactor: fontSizeFactor,
-                  ),
-            ),
-            leading: Icon(isFree ? Icons.check_circle : Icons.error,
-                color: isFree ? Colors.green[500] : Colors.red),
-          )));
+      roomtexts.add(Chip(
+        backgroundColor: isFree ? Colors.lime[200] : Colors.orange[200],
+        label: Text(
+          room.name,
+          style: Theme.of(context).textTheme.display1.apply(
+                color: isFree ? Colors.green[500] : Colors.red,
+                fontSizeFactor: 0.7,
+              ),
+        ),
+      ));
       //roomtexts.add(Divider(color: Colors.black38,));
     }
     return Container(
-        padding: EdgeInsets.only(top: 10, bottom: 50, left: 50, right: 50),
-        child: Card(
-            elevation: 10,
-            // color: Colors.teal[200],
-            child: Column(
+        padding: EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
+        child: Wrap(
               children: roomtexts,
-            )));
+              spacing: 8.0,
+              runSpacing: 4.0,
+            ));
   }
 
   Widget _dateTimeBlock(BuildContext context) {

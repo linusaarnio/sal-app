@@ -373,13 +373,52 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     if (viewingLastBlock()) {
       if (!viewingLastAllowedDate()) {
         changeDate(context, Duration(days: 1));
-      } else
-        return; // We are at the last allowed date and time.
+      } else {
+        setState(() {
+          chipsAlignment = Alignment(0, 0);
+        });
+        return;
+      }
     } else {
       nextScheduleBlock();
     }
     setState(() {
       positiveAnimation = true;
+    });
+    animationController.value = 30;
+    animationController.reverse().whenCompleteOrCancel(() {
+      setState(() {
+        chipsAlignment = Alignment(0, 0);
+      });
+    });
+  }
+
+  /// Animates the chips
+  void _animateChipsRight() {
+    animationController.value = 0;
+    setState(() {
+      positiveAnimation = true;
+    });
+    animationController
+        .forward(from: chipsAlignment.x)
+        .whenCompleteOrCancel(_slideInNextScheduleBlockFromLeft);
+  }
+
+  void _slideInNextScheduleBlockFromLeft() {
+    if (viewingFirstBlock()) {
+      if (!viewingToday()) {
+        changeDate(context, Duration(days: -1));
+      } else {
+        setState(() {
+          chipsAlignment = Alignment(0, 0);
+        });
+        return;
+      }
+    } else {
+      previousScheduleBlock();
+    }
+    setState(() {
+      positiveAnimation = false;
     });
     animationController.value = 30;
     animationController.reverse().whenCompleteOrCancel(() {
@@ -466,6 +505,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
                 _animateChipsLeft();
               } else if (chipsAlignment.x > 3.0) {
                 // slide to the right
+                /*
 
                 if (viewingFirstBlock()) {
                   if (!viewingToday()) {
@@ -474,7 +514,8 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
                 } else {
                   previousScheduleBlock();
                 }
-                // _animateChipsLeft();
+                // _animateChipsLeft();*/
+                _animateChipsRight();
               } else {
                 setState(() {
                   chipsAlignment = Alignment(0.0, 0.0);

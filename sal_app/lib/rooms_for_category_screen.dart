@@ -32,6 +32,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
   Animation<double> chipsAnimation;
   AnimationController animationController;
   bool positiveAnimation = true;
+  double slideExtent = 50; // how far the chips slide when animated
 
   /// Asynchronously creates the category from ical, will fail without internet connection.
   Future<void> _createCategory() async {
@@ -91,7 +92,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     animationController = AnimationController(
         duration: const Duration(milliseconds: 100), vsync: this);
     chipsAnimation =
-        Tween<double>(begin: 0, end: 50).animate(animationController)
+        Tween<double>(begin: 0, end: slideExtent).animate(animationController)
           ..addListener(() {
             setState(() {
               if (positiveAnimation) {
@@ -357,18 +358,17 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
             )));
   }
 
-  /// Animates the chips
-  void _animateChipsLeft() {
+  _switchBlockAnimated(SlideDirection direction) {
     animationController.value = 0;
     setState(() {
-      positiveAnimation = false;
-      //chipsAlignment = Alignment(0, 0);
+      positiveAnimation = (direction == SlideDirection.left) ? false : true;
     });
-    animationController
-        .forward(from: chipsAlignment.x)
-        .whenCompleteOrCancel(_slideInNextScheduleBlockFromRight);
+    animationController.forward(from: chipsAlignment.x).whenCompleteOrCancel(
+        (direction == SlideDirection.left)
+            ? _slideInNextScheduleBlockFromRight
+            : _slideInPreviousScheduleBlockFromLeft);
   }
-
+  
   void _slideInNextScheduleBlockFromRight() {
     if (viewingLastBlock()) {
       if (!viewingLastAllowedDate()) {
@@ -385,7 +385,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     setState(() {
       positiveAnimation = true;
     });
-    animationController.value = 30;
+    animationController.value = slideExtent;
     animationController.reverse().whenCompleteOrCancel(() {
       setState(() {
         chipsAlignment = Alignment(0, 0);
@@ -393,18 +393,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     });
   }
 
-  /// Animates the chips
-  void _animateChipsRight() {
-    animationController.value = 0;
-    setState(() {
-      positiveAnimation = true;
-    });
-    animationController
-        .forward(from: chipsAlignment.x)
-        .whenCompleteOrCancel(_slideInNextScheduleBlockFromLeft);
-  }
-
-  void _slideInNextScheduleBlockFromLeft() {
+  void _slideInPreviousScheduleBlockFromLeft() {
     if (viewingFirstBlock()) {
       if (!viewingToday()) {
         changeDate(context, Duration(days: -1));
@@ -420,7 +409,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     setState(() {
       positiveAnimation = false;
     });
-    animationController.value = 30;
+    animationController.value = slideExtent;
     animationController.reverse().whenCompleteOrCancel(() {
       setState(() {
         chipsAlignment = Alignment(0, 0);
@@ -450,78 +439,33 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    return /*SwipeDetector(
-        onSwipeRight: () {
-          if (viewingLastBlock()) {
-            if (!viewingLastAllowedDate()) {
-              changeDate(context, Duration(days: 1));
-            }
-          } else {
-            nextScheduleBlock();
-          }
-        },*/
+    return
+        // Everything is wrapped in a GD to detect swipes
         GestureDetector(
-            /*
-            onHorizontalDragEnd: (DragEndDetails details) {
-              if (details.primaryVelocity < 0) {
-              if (viewingLastBlock()) {
-                if (!viewingLastAllowedDate()) {
-                  changeDate(context, Duration(days: 1));
-                }
-              } else {
-                nextScheduleBlock();
-              }
-            } else {
-              if (viewingFirstBlock()) {
-                if (!viewingToday()) {
-                  changeDate(context, Duration(days: -1));
-                }
-              } else {
-                previousScheduleBlock();
-              }
-            } },*/
-
+            // While we swipe
             onPanUpdate: (DragUpdateDetails details) {
               setState(() {
                 chipsAlignment = Alignment(
                     chipsAlignment.x +
-                        20 * //Change 20 to swipeSpeed
+                        20 *
                             details.delta.dx /
                             MediaQuery.of(context).size.width,
                     0.0);
               });
             },
+            // When we release the swipe
             onPanEnd: (DragEndDetails details) {
               if (chipsAlignment.x < -3.0) {
-                // slide to the left
-                /*
-                if (viewingLastBlock()) {
-                  if (!viewingLastAllowedDate()) {
-                    changeDate(context, Duration(days: 1));
-                  }
-                } else {
-                  nextScheduleBlock();
-                } */
-                _animateChipsLeft();
+                _switchBlockAnimated(SlideDirection.left);
               } else if (chipsAlignment.x > 3.0) {
-                // slide to the right
-                /*
-
-                if (viewingFirstBlock()) {
-                  if (!viewingToday()) {
-                    changeDate(context, Duration(days: -1));
-                  }
-                } else {
-                  previousScheduleBlock();
-                }
-                // _animateChipsLeft();*/
-                _animateChipsRight();
+                _switchBlockAnimated(SlideDirection.right);
               } else {
                 setState(() {
                   chipsAlignment = Alignment(0.0, 0.0);
                 });
               }
             },
+            // Shows a progress indicator until the category is loaded, then the actual content.
             child: Container(
               alignment: Alignment.topCenter,
               child: (category != null)

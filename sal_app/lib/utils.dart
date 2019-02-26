@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 /// The starting hours of schedule blocks for tekFak.
 List<int> startHours = [8, 10, 13, 15, 17, 19];
 
+enum SlideDirection {
+  left, right
+}
+
 int currentYear = DateTime.now().year;
 int currentMonth = DateTime.now().month;
 int currentDay = DateTime.now().day;

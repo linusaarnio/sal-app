@@ -368,7 +368,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
             ? _slideInNextScheduleBlockFromRight
             : _slideInPreviousScheduleBlockFromLeft);
   }
-  
+
   void _slideInNextScheduleBlockFromRight() {
     if (viewingLastBlock()) {
       if (!viewingLastAllowedDate()) {
@@ -397,6 +397,14 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     if (viewingFirstBlock()) {
       if (!viewingToday()) {
         changeDate(context, Duration(days: -1));
+        setState(() {
+          startTime = TimeOfDay(
+            hour:
+                startHours[startHours.length -1], // Starthour will be the latest passed hour.
+            minute: 15,
+          );
+          endTime = TimeOfDay(hour: startTime.hour + 2, minute: 0);
+        });
       } else {
         setState(() {
           chipsAlignment = Alignment(0, 0);

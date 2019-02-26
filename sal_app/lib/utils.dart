@@ -80,3 +80,8 @@ Map<String, IconData> iconForCategory = {
   "ISYtan": Icons.people_outline,
   "ISY-salar": Icons.lightbulb_outline,
 };
+
+// Colors 
+const Color liuBlue100 = Color(0xff00b9e7);
+const Color liuTurqoise60 = Color(0xFF93d9e1);
+const Color liuTurqoise40 = Color(0xFFc0e7eb); 

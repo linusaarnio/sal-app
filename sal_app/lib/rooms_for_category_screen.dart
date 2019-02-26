@@ -4,10 +4,12 @@ import 'category.dart';
 import 'ical_to_category.dart';
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/animation.dart';
 
 Color activeArrowColor = Colors.grey[600];
 Color disabledArrowColor = Colors.grey[300];
 double fontSizeFactor = 0.5;
+double chipSizeFactor = 0.7;
 
 /// The screen showing which rooms are free for a chosen category.
 class RoomsForCategoryScreen extends StatefulWidget {
@@ -20,11 +22,16 @@ class RoomsForCategoryScreen extends StatefulWidget {
   _RoomsForCategoryScreenState createState() => _RoomsForCategoryScreenState();
 }
 
-class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
+class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
+    with SingleTickerProviderStateMixin {
   Category category;
   DateTime date = DateTime.now();
   TimeOfDay startTime; // change this
   TimeOfDay endTime;
+  Alignment chipsAlignment = Alignment(0.0, 0.0);
+  Animation<double> chipsAnimation;
+  AnimationController animationController;
+  bool positiveAnimation = true;
 
   /// Asynchronously creates the category from ical, will fail without internet connection.
   Future<void> _createCategory() async {
@@ -76,6 +83,25 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
       );
       await _createCategory();
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+        duration: const Duration(milliseconds: 100), vsync: this);
+    chipsAnimation =
+        Tween<double>(begin: 0, end: 50).animate(animationController)
+          ..addListener(() {
+            setState(() {
+              if (positiveAnimation) {
+                chipsAlignment = Alignment(chipsAnimation.value, 0);
+              } else {
+                chipsAlignment = Alignment(-chipsAnimation.value, 0);
+              }
+            });
+          });
+    //controller.forward();
   }
 
   /// Is the chosen date todays date?
@@ -222,10 +248,9 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
                 date.month.toString() +
                 "-" +
                 date.day.toString(),
-            style: Theme.of(context)
-                .textTheme
-                .display1
-                .apply(fontSizeFactor: fontSizeFactor),
+            style: Theme.of(context).textTheme.display1.apply(
+                  fontSizeFactor: fontSizeFactor,
+                ),
             textAlign: TextAlign.center,
           ),
         ),
@@ -315,19 +340,53 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
           room.name,
           style: Theme.of(context).textTheme.display1.apply(
                 color: isFree ? Colors.green[500] : Colors.red,
-                fontSizeFactor: 0.7,
+                fontSizeFactor: 0.55,
               ),
         ),
       ));
       //roomtexts.add(Divider(color: Colors.black38,));
     }
-    return Container(
-        padding: EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
-        child: Wrap(
+    return Align(
+        alignment: chipsAlignment,
+        child: Container(
+            padding: EdgeInsets.only(top: 10, bottom: 50, left: 20, right: 20),
+            child: Wrap(
               children: roomtexts,
               spacing: 8.0,
               runSpacing: 4.0,
-            ));
+            )));
+  }
+
+  /// Animates the chips
+  void _animateChipsLeft() {
+    animationController.value = 0;
+    setState(() {
+      positiveAnimation = false;
+      //chipsAlignment = Alignment(0, 0);
+    });
+    animationController
+        .forward(from: chipsAlignment.x)
+        .whenCompleteOrCancel(_slideInNextScheduleBlockFromRight);
+  }
+
+  void _slideInNextScheduleBlockFromRight() {
+    if (viewingLastBlock()) {
+      if (!viewingLastAllowedDate()) {
+        changeDate(context, Duration(days: 1));
+      } else
+        return; // We are at the last allowed date and time.
+    } else {
+      nextScheduleBlock();
+    }
+    setState(() {
+      positiveAnimation = true;
+    });
+    animationController.value = 30;
+    animationController.reverse().whenCompleteOrCancel(() {
+      setState(() {
+        chipsAlignment = Alignment(0, 0);
+      });
+    });
   }
 
   Widget _dateTimeBlock(BuildContext context) {
@@ -335,7 +394,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
         padding: EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 20),
         child: Card(
             elevation: 5,
-            color: Colors.teal[50],
+            color: liuTurqoise40,
             child: Column(
               children: <Widget>[
                 Center(child: dateTile(context)),
@@ -345,19 +404,95 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen> {
   }
 
   @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topCenter,
-      child: (category != null)
-          ? ListView(
-              children: <Widget>[
-                _dateTimeBlock(context),
-                _roomsBlock(),
-              ],
-            )
-          : LinearProgressIndicator(
-              value: null,
-            ),
-    );
+    return /*SwipeDetector(
+        onSwipeRight: () {
+          if (viewingLastBlock()) {
+            if (!viewingLastAllowedDate()) {
+              changeDate(context, Duration(days: 1));
+            }
+          } else {
+            nextScheduleBlock();
+          }
+        },*/
+        GestureDetector(
+            /*
+            onHorizontalDragEnd: (DragEndDetails details) {
+              if (details.primaryVelocity < 0) {
+              if (viewingLastBlock()) {
+                if (!viewingLastAllowedDate()) {
+                  changeDate(context, Duration(days: 1));
+                }
+              } else {
+                nextScheduleBlock();
+              }
+            } else {
+              if (viewingFirstBlock()) {
+                if (!viewingToday()) {
+                  changeDate(context, Duration(days: -1));
+                }
+              } else {
+                previousScheduleBlock();
+              }
+            } },*/
+
+            onPanUpdate: (DragUpdateDetails details) {
+              setState(() {
+                chipsAlignment = Alignment(
+                    chipsAlignment.x +
+                        20 * //Change 20 to swipeSpeed
+                            details.delta.dx /
+                            MediaQuery.of(context).size.width,
+                    0.0);
+              });
+            },
+            onPanEnd: (DragEndDetails details) {
+              if (chipsAlignment.x < -3.0) {
+                // slide to the left
+                /*
+                if (viewingLastBlock()) {
+                  if (!viewingLastAllowedDate()) {
+                    changeDate(context, Duration(days: 1));
+                  }
+                } else {
+                  nextScheduleBlock();
+                } */
+                _animateChipsLeft();
+              } else if (chipsAlignment.x > 3.0) {
+                // slide to the right
+
+                if (viewingFirstBlock()) {
+                  if (!viewingToday()) {
+                    changeDate(context, Duration(days: -1));
+                  }
+                } else {
+                  previousScheduleBlock();
+                }
+                // _animateChipsLeft();
+              } else {
+                setState(() {
+                  chipsAlignment = Alignment(0.0, 0.0);
+                });
+              }
+            },
+            child: Container(
+              alignment: Alignment.topCenter,
+              child: (category != null)
+                  ? ListView(
+                      children: <Widget>[
+                        _dateTimeBlock(context),
+                        _roomsBlock(),
+                      ],
+                    )
+                  : LinearProgressIndicator(
+                      value: null,
+                    ),
+            ));
   }
 }

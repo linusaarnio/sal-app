@@ -14,9 +14,9 @@ double chipSizeFactor = 0.7;
 /// The screen showing which rooms are free for a chosen category.
 class RoomsForCategoryScreen extends StatefulWidget {
   /// The name of the category this screen is showing rooms for.
-  final String categoryName;
+  //final String categoryName;
 
-  RoomsForCategoryScreen(this.categoryName);
+  RoomsForCategoryScreen();
 
   @override
   _RoomsForCategoryScreenState createState() => _RoomsForCategoryScreenState();
@@ -25,6 +25,7 @@ class RoomsForCategoryScreen extends StatefulWidget {
 class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     with SingleTickerProviderStateMixin {
   Category category;
+  String categoryName = "SU-salar";
   DateTime date = DateTime.now();
   TimeOfDay startTime; // change this
   TimeOfDay endTime;
@@ -37,9 +38,9 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
   /// Asynchronously creates the category from ical, will fail without internet connection.
   Future<void> _createCategory() async {
     String urlString =
-        scheduleBaseUrl + urlEndingForCategorySchedule[widget.categoryName];
+        scheduleBaseUrl + urlEndingForCategorySchedule[categoryName];
     Uri url = Uri.parse(urlString);
-    var tempCategory = await categoryFromUrl(url, widget.categoryName);
+    var tempCategory = await categoryFromUrl(url, categoryName);
     setState(() {
       category = tempCategory;
     });
@@ -399,8 +400,8 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
         changeDate(context, Duration(days: -1));
         setState(() {
           startTime = TimeOfDay(
-            hour:
-                startHours[startHours.length -1], // Starthour will be the latest passed hour.
+            hour: startHours[startHours.length -
+                1], // Starthour will be the latest passed hour.
             minute: 15,
           );
           endTime = TimeOfDay(hour: startTime.hour + 2, minute: 0);
@@ -445,9 +446,48 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     super.dispose();
   }
 
+  Widget _navigationListView() {
+    List<Widget> tiles = <Widget>[];
+    for (int i = 0; i < categoryNames.length; ++i) {
+      var tileCategoryName = categoryNames[i];
+      tiles.add(ListTile(
+          onTap: () {
+            setState(() {
+              categoryName = tileCategoryName;
+              category = null;
+            });
+            didChangeDependencies(); // force update
+            Navigator.pop(context); // close menu drawer
+          },
+          title: Text(tileCategoryName,
+              style: Theme.of(context)
+                  .textTheme
+                  .display1
+                  .apply(fontSizeFactor: 0.6)),
+          leading: Icon(
+            iconForCategory[tileCategoryName],
+            size: 25,
+          )));
+    }
+    return ListView(children: tiles,);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return
+    return Scaffold(
+      drawer: Drawer(
+        child: _navigationListView(),
+      ),
+      appBar: AppBar(
+            backgroundColor: Color.fromRGBO(0, 185, 231, 1.0),//Colors.lime[50],
+            title: Text(
+              categoryName,
+              style: TextStyle(color: Colors.white),
+            ),
+            elevation: 1.0,
+          ),  
+          body: 
+  
         // Everything is wrapped in a GD to detect swipes
         GestureDetector(
             // While we swipe
@@ -486,6 +526,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
                   : LinearProgressIndicator(
                       value: null,
                     ),
-            ));
-  }
+            )));
+    }
 }
+

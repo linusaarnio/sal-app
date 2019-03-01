@@ -25,7 +25,7 @@ class _CategoryScreenSate extends State<CategoryScreen> {
           ),
           elevation: 1.0,
         ),
-        body: RoomsForCategoryScreen(categoryName),
+        body: RoomsForCategoryScreen(),
       );
     }));
   }
@@ -85,7 +85,7 @@ class CategoryTile extends StatelessWidget {
           ),
           elevation: 1.0,
         ),
-        body: RoomsForCategoryScreen(_categoryName),
+        body: RoomsForCategoryScreen(),
       );
     }));
   }

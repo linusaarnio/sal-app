@@ -68,7 +68,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
           minute: 15,
         );
       } else {
-        for (var i = 0; i < startHours.length; ++i) {
+        for (var i = 1; i < startHours.length; ++i) {
           if (startHours[i] > nowHour) {
             startTime = TimeOfDay(
               hour: startHours[

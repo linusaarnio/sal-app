@@ -359,6 +359,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
             )));
   }
 
+  /// Switch schedule block and animate chips according to direction
   _switchBlockAnimated(SlideDirection direction) {
     animationController.value = 0;
     setState(() {
@@ -370,6 +371,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
             : _slideInPreviousScheduleBlockFromLeft);
   }
 
+  /// Switches to the next schedule block and animates from the right side
   void _slideInNextScheduleBlockFromRight() {
     if (viewingLastBlock()) {
       if (!viewingLastAllowedDate()) {
@@ -394,6 +396,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     });
   }
 
+  /// Switches to the previous schedule block and animates the chips sliding in from left
   void _slideInPreviousScheduleBlockFromLeft() {
     if (viewingFirstBlock()) {
       if (!viewingToday()) {
@@ -426,6 +429,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     });
   }
 
+  /// The block showing date and times, and controls for these
   Widget _dateTimeBlock(BuildContext context) {
     return Container(
         padding: EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 20),
@@ -446,15 +450,21 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
     super.dispose();
   }
 
+  /// The ListView containing buttons that change the category.
   Widget _navigationListView() {
     List<Widget> tiles = <Widget>[];
+    tiles.add(DrawerHeader(
+      child: Text("Kategorier", style: TextStyle(color: Colors.white, fontSize: 18),),
+      decoration: BoxDecoration(color: liuBlue100),
+    ));
     for (int i = 0; i < categoryNames.length; ++i) {
       var tileCategoryName = categoryNames[i];
       tiles.add(ListTile(
           onTap: () {
             setState(() {
               categoryName = tileCategoryName;
-              category = null;
+              category =
+                  null; // category will be loaded in didChangeDependencies
             });
             didChangeDependencies(); // force update
             Navigator.pop(context); // close menu drawer
@@ -469,64 +479,65 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
             size: 25,
           )));
     }
-    return ListView(children: tiles,);
+    return ListView(
+      children: tiles,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: _navigationListView(),
-      ),
-      appBar: AppBar(
-            backgroundColor: Color.fromRGBO(0, 185, 231, 1.0),//Colors.lime[50],
-            title: Text(
-              categoryName,
-              style: TextStyle(color: Colors.white),
-            ),
-            elevation: 1.0,
-          ),  
-          body: 
-  
-        // Everything is wrapped in a GD to detect swipes
-        GestureDetector(
-            // While we swipe
-            onPanUpdate: (DragUpdateDetails details) {
-              setState(() {
-                chipsAlignment = Alignment(
-                    chipsAlignment.x +
-                        20 *
-                            details.delta.dx /
-                            MediaQuery.of(context).size.width,
-                    0.0);
-              });
-            },
-            // When we release the swipe
-            onPanEnd: (DragEndDetails details) {
-              if (chipsAlignment.x < -3.0) {
-                _switchBlockAnimated(SlideDirection.left);
-              } else if (chipsAlignment.x > 3.0) {
-                _switchBlockAnimated(SlideDirection.right);
-              } else {
-                setState(() {
-                  chipsAlignment = Alignment(0.0, 0.0);
-                });
-              }
-            },
-            // Shows a progress indicator until the category is loaded, then the actual content.
-            child: Container(
-              alignment: Alignment.topCenter,
-              child: (category != null)
-                  ? ListView(
-                      children: <Widget>[
-                        _dateTimeBlock(context),
-                        _roomsBlock(),
-                      ],
-                    )
-                  : LinearProgressIndicator(
-                      value: null,
-                    ),
-            )));
-    }
-}
+        drawer: Drawer(
+          child: _navigationListView(),
+        ),
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(0, 185, 231, 1.0), //Colors.lime[50],
+          title: Text(
+            categoryName,
+            style: TextStyle(color: Colors.white),
+          ),
+          elevation: 1.0,
+        ),
+        body:
 
+            // Everything is wrapped in a GD to detect swipes
+            GestureDetector(
+                // While swiping
+                onPanUpdate: (DragUpdateDetails details) {
+                  setState(() {
+                    chipsAlignment = Alignment(
+                        chipsAlignment.x +
+                            20 *
+                                details.delta.dx /
+                                MediaQuery.of(context).size.width,
+                        0.0);
+                  });
+                },
+                // When swipe is released
+                onPanEnd: (DragEndDetails details) {
+                  if (chipsAlignment.x < -3.0) {
+                    _switchBlockAnimated(SlideDirection.left);
+                  } else if (chipsAlignment.x > 3.0) {
+                    _switchBlockAnimated(SlideDirection.right);
+                  } else {
+                    setState(() {
+                      chipsAlignment = Alignment(0.0, 0.0);
+                    });
+                  }
+                },
+                // Shows a progress indicator until the category is loaded, then the actual content.
+                child: Container(
+                  alignment: Alignment.topCenter,
+                  child: (category != null)
+                      ? ListView(
+                          children: <Widget>[
+                            _dateTimeBlock(context),
+                            _roomsBlock(),
+                          ],
+                        )
+                      : LinearProgressIndicator(
+                          value: null,
+                        ),
+                )));
+  }
+}

@@ -13,9 +13,6 @@ double chipSizeFactor = 0.7;
 
 /// The screen showing which rooms are free for a chosen category.
 class RoomsForCategoryScreen extends StatefulWidget {
-  /// The name of the category this screen is showing rooms for.
-  //final String categoryName;
-
   RoomsForCategoryScreen();
 
   @override
@@ -27,7 +24,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
   Category category;
   String categoryName = "SU-salar";
   DateTime date = DateTime.now();
-  TimeOfDay startTime; // change this
+  TimeOfDay startTime; 
   TimeOfDay endTime;
   Alignment chipsAlignment = Alignment(0.0, 0.0);
   Animation<double> chipsAnimation;
@@ -57,7 +54,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
           hour: 8,
           minute: 15,
         );
-      } else if (nowHour == 8) {
+      } else if (nowHour <= 8) {
         startTime = TimeOfDay(
           hour: 8,
           minute: 15,
@@ -65,6 +62,11 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
       } else if (nowHour >= 19) {
         startTime = TimeOfDay(
           hour: 19,
+          minute: 15,
+        );
+      } else if (nowHour == 12) {
+        startTime = TimeOfDay(
+          hour: 13,
           minute: 15,
         );
       } else {
@@ -103,7 +105,6 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
               }
             });
           });
-    //controller.forward();
   }
 
   /// Is the chosen date todays date?
@@ -346,7 +347,6 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
               ),
         ),
       ));
-      //roomtexts.add(Divider(color: Colors.black38,));
     }
     return Align(
         alignment: chipsAlignment,
@@ -491,7 +491,7 @@ class _RoomsForCategoryScreenState extends State<RoomsForCategoryScreen>
           child: _navigationListView(),
         ),
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(0, 185, 231, 1.0), //Colors.lime[50],
+          backgroundColor: Color.fromRGBO(0, 185, 231, 1.0), 
           title: Text(
             categoryName,
             style: TextStyle(color: Colors.white),

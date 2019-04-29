@@ -1,4 +1,3 @@
-import 'room.dart';
 import 'package:flutter/material.dart';
 
 /// This is a file containing useful data structures.

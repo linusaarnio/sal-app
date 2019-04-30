@@ -22,4 +22,6 @@ TODO:
 - Fixa tiden så att den alltid är rätt med utc för en dagsvisning. FIXAT
 - Se till att en sluttid inte får vara före en starttid då man väljer  FIXAT
 - Kolla upp var tiderna blir fel, den visar inte helt rätt. Blir inte utc av någon anledning. FIXAT
-- Fixa så att tiden ändras till första blocket om man inte är inne på idag!
+- Fixa så att tiden ändras till första blocket om man inte är inne på idag! FIXAT
+
+- Om en bokning är 9-13 visas salen som ledig 8:15-10:00.

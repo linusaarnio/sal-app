@@ -1,8 +1,7 @@
-# sal_app
+# Lediga Salar
 
-A new Flutter project.
+Se vilka salar som är lediga på LiU för en viss kategori under ett schemablock eller användarvalt tidsintervall.
 
-## Getting Started
+## Tekniskt
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Appen är skriven i Flutter med Dart. Kom gärna med förbättringsförslag eller bidra med lite kod!
